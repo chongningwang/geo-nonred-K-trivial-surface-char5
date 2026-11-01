@@ -1,31 +1,76 @@
-# A geometrically non-reduced regular surface with trivial canonical class in characteristic 5
+# Lean formalization of Theorem 6.1 of arXiv:2604.05293
 
-This repository is a Lean 4 formalization, built on mathlib, of the existence of a
-proper, integral, regular surface \(Y\) over
-\(k=\mathbb F_5(s_1,s_2)\) (`FractionRing (MvPolynomial (Fin 2) (ZMod 5))`) with
-\(H^0(Y,\mathcal O_Y)=k\) that is not geometrically reduced, and whose sheaf
-\(\omega\), defined below from absolute differentials, is isomorphic to
-\(\mathcal O_Y\). In the code this is Theorem 6.1. Projectivity is not formalized.
+This repository is a Lean 4 formalization, built on mathlib, of Theorem 6.1 of
 
-[`exists_theorem61_omega_rationalBase`](Red61/Theorem61.lean) uses the explicit sheaf
-defined in [`Omega.lean`](Red61/Omega.lean):
-\[
-\omega=\mathcal Hom_{\mathcal O_Y}
-\left(f^*\widetilde{\bigwedge^2\Omega_{k/\mathbb Z}},
-\bigwedge^4\Omega_{Y/\mathbb Z}\right).
-\]
-Over the field of characteristic five, absolute differentials over the integers
-identify canonically with differentials over the prime field.
-The standard base volume identifies this sheaf with the fourth exterior differential
-sheaf, and the invariant rational volume proves \(\omega\cong\mathcal O_Y\).
-Its pullback has Euler degree zero on every proper integral curve.
-The theorem also states that \(\Omega_{Y/\mathbb Z}\) is locally free of rank four
-([`IsLocallyFreeOfRank`](Red61/AlgebraicGeometry/Modules.lean)): every point lies in the image of an
-open immersion over which it is free on four generators.
-The definition uses actual differential, exterior, pullback, and Hom sheaves;
-triviality is proved separately in [`OmegaTrivialization.lean`](Red61/Canonical/OmegaTrivialization.lean).
+> Chongning Wang and Lei Zhang, *Geometric singularities of regular surfaces with nef
+> anti-canonical divisors over imperfect fields*,
+> [arXiv:2604.05293v3](https://arxiv.org/abs/2604.05293v3).
 
-Identification with the Serre dualizing sheaf is not formalized.
+> **Theorem 6.1.** Let $\ell=\mathbb F_5(s_1,s_2)$. Then there exists a projective regular
+> surface $S$ over $\ell$ with $H^0(S,\mathcal O_S)=\ell$ and $K_S\equiv0$ such that
+> $S$ is geometrically non-reduced over $\ell$.
+
+## What Lean proves
+
+The main theorem is `Red61.Contraction.exists_theorem61_omega_rationalBase` in
+[`Red61/Theorem61.lean`](Red61/Theorem61.lean):
+
+```lean
+theorem exists_theorem61_omega_rationalBase :
+    ∃ (Y : Scheme) (f : Y ⟶ Spec (CommRingCat.of k)),
+      IsProper f ∧ IsIntegral Y ∧ IsNoetherian Y ∧ topologicalKrullDim Y = 2 ∧
+      (∀ y : Y, IsRegularLocalRing (Y.presheaf.stalk y)) ∧
+      Function.Bijective (globalScalarMap k f) ∧ ¬ GeometricallyReduced f ∧
+      IsLocallyFreeOfRank 4 (nativeAbsoluteDifferentialModule Y) ∧
+      let ω := omega k f rationalBaseAbsoluteDifferentialBasis
+      Nonempty (ω ≅ structureSheafModule Y) ∧ IsCurveNumericallyTrivial k f ω
+```
+
+Here `k` is `FractionRing (MvPolynomial (Fin 2) (ZMod 5))`, that is
+$k=\mathbb F_5(s_1,s_2)$. In words: there are a scheme $Y$ and a morphism
+$f\colon Y\to\operatorname{Spec}k$ such that
+
+1. $f$ is proper;
+2. $Y$ is integral, noetherian and of dimension 2;
+3. every local ring of $Y$ is regular;
+4. the map $k\to H^0(Y,\mathcal O_Y)$ is bijective;
+5. $Y$ is not geometrically reduced over $k$;
+6. the sheaf of absolute differentials $\Omega_{Y/\mathbb Z}$, which equals
+   $\Omega_{Y/\mathbb F_5}$, is locally free of rank 4
+   ([`IsLocallyFreeOfRank`](Red61/AlgebraicGeometry/Modules.lean));
+7. the sheaf
+   $\omega=\mathcal{H}om_{\mathcal O_Y}\bigl(f^*\textstyle\bigwedge^2\Omega_{k/\mathbb Z},\,\bigwedge^4\Omega_{Y/\mathbb Z}\bigr)$,
+   defined in [`Red61/Omega.lean`](Red61/Omega.lean), is isomorphic to $\mathcal O_Y$;
+8. $\omega$ has degree 0 on every proper integral curve $g\colon C\to Y$: here the degree
+   is $\chi(g^*\omega)-\chi(\mathcal O_C)$ with $\chi=\dim H^0-\dim H^1$
+   ([`Red61/CurveNumericalTriviality.lean`](Red61/CurveNumericalTriviality.lean)).
+
+The notions in items 1–5 are mathlib's. The scheme $Y$ is the surface `S` constructed
+explicitly in `Red61/Surface/` from affine charts, an invariant quotient and a contraction.
+The proof assumes no geometric hypotheses, and its only axioms are `propext`,
+`Classical.choice` and `Quot.sound`.
+
+## What is not formalized
+
+Compared with Theorem 6.1:
+
+- **Projectivity.** Lean proves that $f$ is proper, not that $Y$ is projective.
+- **The canonical class.** Lean's $\omega$ is defined from absolute differentials. Its
+  identification with the canonical sheaf $\omega_{Y/k}=\det L_{Y/k}$ of the local
+  complete intersection $Y/k$, whose divisor class is $K_Y$, is standard but not
+  formalized. Since $Y$ is regular of finite type over $k$, it is a local complete
+  intersection. The transitivity triangle
+  $f^*L_{k/\mathbb F_5}\to L_{Y/\mathbb F_5}\to L_{Y/k}$, with
+  $L_{k/\mathbb F_5}\simeq\Omega_{k/\mathbb F_5}[0]$ free of rank 2, and item 6 give
+  $L_{Y/\mathbb F_5}\simeq\Omega_{Y/\mathbb F_5}[0]$ and
+  $\omega_{Y/k}\cong\bigwedge^4\Omega_{Y/\mathbb F_5}\otimes f^*(\bigwedge^2\Omega_{k/\mathbb F_5})^\vee\cong\omega$.
+  With item 7 this gives $\omega_{Y/k}\cong\mathcal O_Y$, so $K_Y\sim0$, and in
+  particular $K_Y\equiv0$.
+- **Cohomology.** In item 8, cohomology is defined as $\operatorname{Ext}^n(\mathcal O_Y,-)$
+  in sheaves of $\mathcal O_Y$-modules, and the Lean code does not compare it with other
+  definitions. Item 8 also follows directly from item 7.
+
+## Structure
 
 The active library contains 42 modules, exactly the import closure of
 `Red61.Theorem61`, in four layers:
@@ -36,7 +81,7 @@ The active library contains 42 modules, exactly the import closure of
   and exterior-power sheaves, rational forms, principal atlases);
 - `Surface/`: the construction of the surface and its properties;
 - `Canonical/`: local differential bases, the invariant volume and the proof that
-  \(\omega\cong\mathcal O_Y\);
+  $\omega\cong\mathcal O_Y$;
 - `Theorem61.lean`, `Omega.lean`, `CurveNumericalTriviality.lean`: the statement.
 
 Each merged file lists the former modules it contains.

@@ -28,7 +28,7 @@ theorem exists_theorem61_omega_rationalBase :
 
 Here `k` is `FractionRing (MvPolynomial (Fin 2) (ZMod 5))`, that is
 $k=\mathbb F_5(s_1,s_2)$. In words: there are a scheme $Y$ and a morphism
-$f\colon Y\to\operatorname{Spec}k$ such that
+$f\colon Y\to\mathrm{Spec}\,k$ such that
 
 1. $f$ is proper;
 2. $Y$ is integral, noetherian and of dimension 2;
@@ -39,7 +39,7 @@ $f\colon Y\to\operatorname{Spec}k$ such that
    $\Omega_{Y/\mathbb F_5}$, is locally free of rank 4
    ([`IsLocallyFreeOfRank`](Red61/AlgebraicGeometry/Modules.lean));
 7. the sheaf
-   $\omega=\mathcal{H}om_{\mathcal O_Y}\bigl(f^*\textstyle\bigwedge^2\Omega_{k/\mathbb Z},\,\bigwedge^4\Omega_{Y/\mathbb Z}\bigr)$,
+   $\omega=\mathcal{H}om_{\mathcal O_Y}\bigl(f^*\bigwedge^2\Omega_{k/\mathbb Z},\,\bigwedge^4\Omega_{Y/\mathbb Z}\bigr)$,
    defined in [`Red61/Omega.lean`](Red61/Omega.lean), is isomorphic to $\mathcal O_Y$;
 8. $\omega$ has degree 0 on every proper integral curve $g\colon C\to Y$: here the degree
    is $\chi(g^*\omega)-\chi(\mathcal O_C)$ with $\chi=\dim H^0-\dim H^1$
@@ -66,7 +66,7 @@ Compared with Theorem 6.1:
   $\omega_{Y/k}\cong\bigwedge^4\Omega_{Y/\mathbb F_5}\otimes f^*(\bigwedge^2\Omega_{k/\mathbb F_5})^\vee\cong\omega$.
   With item 7 this gives $\omega_{Y/k}\cong\mathcal O_Y$, so $K_Y\sim0$, and in
   particular $K_Y\equiv0$.
-- **Cohomology.** In item 8, cohomology is defined as $\operatorname{Ext}^n(\mathcal O_Y,-)$
+- **Cohomology.** In item 8, cohomology is defined as $\mathrm{Ext}^n(\mathcal O_Y,-)$
   in sheaves of $\mathcal O_Y$-modules, and the Lean code does not compare it with other
   definitions. Item 8 also follows directly from item 7.
 

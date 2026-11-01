@@ -2,7 +2,7 @@
 
 This repository is a Lean 4 formalization, built on mathlib, of Theorem 6.1 of
 
-> Chongning Wang and Lei Zhang, *Geometric singularities of regular surfaces with nef
+> [Chongning Wang (王崇宁)](https://chongningwang.github.io) and Lei Zhang, *Geometric singularities of regular surfaces with nef
 > anti-canonical divisors over imperfect fields*,
 > [arXiv:2604.05293v3](https://arxiv.org/abs/2604.05293v3).
 
